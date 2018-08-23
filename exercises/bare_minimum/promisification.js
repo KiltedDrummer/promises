@@ -4,21 +4,23 @@
  */ 
 
 var fs = require('fs');
-var request = require('request');
-var crypto = require('crypto');
 var Promise = require('bluebird');
+var request = Promise.promisifyAll(require('request'));
+var crypto = require('crypto');
+Promise.promisifyAll(request);
+
 
 // (1) Asyncronous HTTP request
 var getGitHubProfile = function(user, callback) {
   var options = {
     url: 'https://api.github.com/users/' + user,
     headers: { 'User-Agent': 'request' },
-    json: true  // will JSON.parse(body) for us
+    json: true // will JSON.parse(body) for us
   };
 
   request.get(options, function(err, res, body) {
     if (err) {
-      callback(err, null);
+      callback(e69rr, null);
     } else if (body.message) {
       callback(new Error('Failed to get GitHub profile: ' + body.message), null);
     } else {
@@ -27,7 +29,7 @@ var getGitHubProfile = function(user, callback) {
   });
 };
 
-var getGitHubProfileAsync; // TODO
+var getGitHubProfileAsync = Promise.promisify(getGitHubProfile); 
 
 
 // (2) Asyncronous token generation
@@ -38,7 +40,7 @@ var generateRandomToken = function(callback) {
   });
 };
 
-var generateRandomTokenAsync; // TODO
+var generateRandomTokenAsync = Promise.promisify(generateRandomToken); 
 
 
 // (3) Asyncronous file manipulation
@@ -52,11 +54,11 @@ var readFileAndMakeItFunny = function(filePath, callback) {
       })
       .join('\n');
 
-    callback(funnyFile);
+    callback(null, funnyFile);
   });
 };
 
-var readFileAndMakeItFunnyAsync; // TODO
+var readFileAndMakeItFunnyAsync = Promise.promisify(readFileAndMakeItFunny);
 
 // Export these functions so we can test them and reuse them in later exercises
 module.exports = {
